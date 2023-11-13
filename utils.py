@@ -10,39 +10,19 @@ load_dotenv()
 
 api_key = os.environ['OPENAI_API_KEY']
 
-def read_file_contents(file_path: str) -> str:
+def read_file(file_path: str) -> str:
     """ Kinda obvious isn't it? """
     with open(file_path, 'r', encoding='utf-8') as file:
         contents = file.read()
     return contents
 
-def cosine_distance(embedding_1: list, embedding_2:list) -> float:
-    """ Kinda obvious isn't it? """
-    
-    # Convert lists to numpy arrays
-    vector1 = np.array(list1)
-    vector2 = np.array(list2)
+def cosine_similarity(a:list, b:list) -> float:
+    dot_product = sum(x * y for x, y in zip(a, b))
+    magnitude_a = sum(x * x for x in a) ** 0.5
+    magnitude_b = sum(x * x for x in b) ** 0.5
+    return dot_product / (magnitude_a * magnitude_b)
 
-    # Compute the dot product of the two vectors
-    dot_product = np.dot(vector1, vector2)
-    
-    # Compute the L2 norms (magnitudes) of each vector
-    magnitude1 = np.linalg.norm(vector1)
-    magnitude2 = np.linalg.norm(vector2)
-
-    # Avoid division by zero
-    if magnitude1 == 0.0 or magnitude2 == 0.0:
-        raise ValueError("One or both input vectors are zero-vectors which causes division by zero.")
-    
-    # Compute the cosine similarity
-    cosine_similarity = dot_product / (magnitude1 * magnitude2)
-    
-    # Compute the cosine distance
-    cosine_distance = 1.0 - cosine_similarity
-    
-    return cosine_distance
-
-def get_openai_embedding(text_input:str) -> List[float]:
+def get_embedding(text_input:str) -> List[float]:
     """
     https://platform.openai.com/docs/guides/embeddings/what-are-embeddings
     """
