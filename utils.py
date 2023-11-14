@@ -72,3 +72,35 @@ def chat_with_gpt() -> None:
         result = get_openai_chat(messages)
         print(f"Bot: {result}")
         messages.append({'role':'assistant','content':result})
+        
+        
+def chat_with_gpt_rag() -> None:
+    """lol"""
+    messages = [{"role": "system","content": "You are a helpful assistant. You are given knowledge when required in the user prompt"},{"role": "assistant","content": "Hello!"}]
+    
+    knowledge_content = read_file('knowledge_base/Moronistan.txt')
+    knowledge_embedding = get_embedding(knowledge_content)
+
+
+    intercepted = False
+    while True: 
+        user_input = input("User: ")
+        if user_input == "STOP":
+            break
+            
+        user_input_embedding = get_embedding(user_input)
+        similarity = cosine_similarity(user_input_embedding,knowledge_embedding)
+        print(similarity)
+        
+        if (similarity > 0.8) and (intercepted == False):
+            intercepted = True
+            user_input += "---------\nKnowledge\n----------"
+            user_input += knowledge_content
+            print("--------------")
+            print(f"User's request has been indentified in the knowledge base, intercepting.")
+            print("--------------")
+
+        messages.append({'role':'user','content':user_input})
+        result = get_openai_chat(messages)
+        print(f"Bot: {result}")
+        messages.append({'role':'assistant','content':result})
